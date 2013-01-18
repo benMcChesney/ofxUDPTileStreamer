@@ -32,8 +32,8 @@ void ofxUDPTileStreamer::setupListener ( int _width , int _height , string _addr
 	udpConnection.SetNonBlocking(true);
 	*/
 	udpConnection.Create();
-	udpConnection.Bind(11999);
-	udpConnection.SetNonBlocking(true);
+	udpConnection.Bind( port );
+	udpConnection.SetNonBlocking( true );
 
 	texture.allocate( tileWidth , tileHeight , GL_RGB ) ; 
 
@@ -65,23 +65,22 @@ void ofxUDPTileStreamer::recieveData( )
 		int height = tileHeight ; 
 		int numChannels = 3 ; 
 		int numPixels = width*height*numChannels  ; 
-		 
-		//if ( message.at( 0 ) == _char0 )
-		//{
-			//cout << "first! " << endl; 
-			//unsigned char * webcamPixels = videoGrabber.getPixels() ; 
-			unsigned char * pixels = new unsigned char[ numPixels ] ; //videoGrabber.getPixels() ; 
-		
-			for ( int i = 0 ; i < numPixels ; i+=3 ) 
-			{
-				pixels[i] = udpMessage[i] ; 
-				pixels[i+1] = udpMessage[i+1] ; 
-				pixels[i+2] = udpMessage[i+2] ; 
-			}
 
-			texture.loadData( pixels , tileWidth , tileHeight , GL_RGB ) ; 
+		unsigned char * pixels = new unsigned char[ numPixels ] ; //videoGrabber.getPixels() ; 
+		
+		for ( int i = 0 ; i < numPixels ; i+=3 ) 
+		{
+			pixels[i] = udpMessage[i] ; 
+			pixels[i+1] = udpMessage[i+1] ; 
+			pixels[i+2] = udpMessage[i+2] ; 
+		}
+
+		texture.loadData( pixels , tileWidth , tileHeight , GL_RGB ) ; 
 	}
-		//}
+	else
+	{
+		//cout << "blank message! " << endl ;
+	}
 		//if (  message.at( 0 ) == _char1 ) 
 		//{
 			//cout << "second! " << endl; 

@@ -18,7 +18,7 @@ void testApp::setup(){
 	//bFirstContact = false ; 
 	//connectionsRecieved = 0 ; 
 	tileStreamer.setupListener( 125 , 125 , "127.0.0.1" , 11999 , ofColor( 255 , 0 , 255 ) ) ; 
-	tileStreamer2.setupListener( 125 , 125 , "127.0.0.1" , 12000 , ofColor( 0 , 255 , 125 ) ) ; 
+	tileStreamer2.setupListener( 125 , 125 , "127.0.0.1" , 11998 , ofColor( 0 , 255 , 125 ) ) ; 
 }
 
 //--------------------------------------------------------------
