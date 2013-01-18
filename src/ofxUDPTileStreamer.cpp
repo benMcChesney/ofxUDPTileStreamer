@@ -1,8 +1,10 @@
  
+
+#define STREAM_PACKET_MAX 100000
 	
 #include "ofxUDPTileStreamer.h"
 
-void ofxUDPTileStreamer::setupStreamer ( int _width , int _height , string _address , int _port , ofColor _color ) 
+void ofxUDPTileStreamer::setup ( bool bStreaming , int _width , int _height , string _address , int _port , ofColor _color ) 
 {
 	tileWidth = _width ; 
 	tileHeight = _height ;
@@ -10,31 +12,31 @@ void ofxUDPTileStreamer::setupStreamer ( int _width , int _height , string _addr
 	port = _port ; 
 	debugColor = _color ; 
 
+	udpConnection.SetReuseAddress( true ) ; 
+	udpConnection.SetTimeoutReceive( 100 ) ; 
+	udpConnection.SetTimeoutSend( 100 ) ; 
 	udpConnection.Create() ; 
-	udpConnection.Connect( address.c_str() , port );
-	udpConnection.SetNonBlocking(true);
+	
 
-	texture.allocate( tileWidth , tileHeight , GL_RGB ) ; 
+	if ( bStreaming == true ) 
+	{
+		cout << "streaming on : " << address << ":" << port << endl; 
+		bool bResult = udpConnection.Connect( address.c_str() , port );
+		cout << bResult << " connection result on port : " << port << endl  ; 
+		udpConnection.SetNonBlocking(true);
+	}
+	else
+	{
+		cout << "listening on : " << address << ":" << port << endl; 
+		
+		bool bResult = udpConnection.Bind( port );
+		cout << bResult <<  " bind result on port : " << port << endl  ; 
+		udpConnection.SetNonBlocking( true );
+	}
 
-}
-
-void ofxUDPTileStreamer::setupListener ( int _width , int _height , string _address , int _port , ofColor _color ) 
-{
-	tileWidth = _width ; 
-	tileHeight = _height ;
-	address = _address ; 
-	port = _port ; 
-	debugColor = _color ; 
-
-	/*
-	udpConnection.Create() ; 
-	udpConnection.Connect( address.c_str() , port );
-	udpConnection.SetNonBlocking(true);
-	*/
-	udpConnection.Create();
-	udpConnection.Bind( port );
-	udpConnection.SetNonBlocking( true );
-
+	messageSentStatus = -1 ;
+	messageRecievedStatus = -1 ;
+	
 	texture.allocate( tileWidth , tileHeight , GL_RGB ) ; 
 
 }
@@ -43,6 +45,9 @@ void ofxUDPTileStreamer::draw ( float x , float y )
 {
 	ofSetColor( 255 , 255 , 255 ) ; 
 	texture.draw( x , y ) ; 
+	string status = "sent: " + ofToString( messageSentStatus ) ; 
+	status += "\nrecieved: " + ofToString( messageRecievedStatus ) ; 
+	ofDrawBitmapStringHighlight( status , x , y + tileHeight + 5 ) ; 
 }
 
 void ofxUDPTileStreamer::sendData( )
@@ -55,12 +60,29 @@ void ofxUDPTileStreamer::sendData( )
 
 void ofxUDPTileStreamer::recieveData( ) 
 {
-	char udpMessage[100000];
-	udpConnection.Receive(udpMessage,100000);
-	string message=udpMessage;
-	if(message!="")
-	{
+ 
+	char udpMessage[STREAM_PACKET_MAX];
+	string message;
+	string tempMessage;
+	bool getNext = true ; 
+	//while ( getNext ) 
+	//{
+		
+		int recieve = udpConnection.Receive( udpMessage , STREAM_PACKET_MAX ) ; 
+		tempMessage = udpMessage ; 
 
+		//if ( tempMessage == "" ) 
+		//{
+		//	getNext = false ; 
+		//}
+		//else
+		//{
+			message = tempMessage ; 
+		//}
+	//}
+
+	if ( message != "" ) 
+	{
 		int width = tileWidth ;
 		int height = tileHeight ; 
 		int numChannels = 3 ; 
@@ -76,6 +98,23 @@ void ofxUDPTileStreamer::recieveData( )
 		}
 
 		texture.loadData( pixels , tileWidth , tileHeight , GL_RGB ) ; 
+		messageRecievedStatus =  1 ;
+	}
+	else
+	{
+		messageRecievedStatus = -1 ; 
+	}
+
+
+
+	/*
+	char udpMessage[100000];
+	udpConnection.Receive(udpMessage,100000);
+	string message=udpMessage;
+	if(message!="")
+	{
+
+		 
 	}
 	else
 	{
@@ -124,6 +163,34 @@ void ofxUDPTileStreamer::recieveData( )
 		*/
 
 
+	//}*/
+}
+
+void ofxUDPTileStreamer::recieveMessage( char udpMessage[100000] ) 
+{
+	
+	//if ( message != "" ) 
+	//{
+		int width = tileWidth ;
+		int height = tileHeight ; 
+		int numChannels = 3 ; 
+		int numPixels = width*height*numChannels  ; 
+
+		unsigned char * pixels = new unsigned char[ numPixels ] ; //videoGrabber.getPixels() ; 
+		
+		for ( int i = 0 ; i < numPixels ; i+=3 ) 
+		{
+			pixels[i] = udpMessage[ i ] ; 
+			pixels[i+1] = udpMessage[ i+1 ]  ; 
+			pixels[i+2] = udpMessage[ i+2 ]  ; 
+		}
+
+		texture.loadData( pixels , tileWidth , tileHeight , GL_RGB ) ; 
+		messageRecievedStatus =  1 ;
+	//}
+	//else
+	//{
+		messageRecievedStatus = -1 ; 
 	//}
 }
 

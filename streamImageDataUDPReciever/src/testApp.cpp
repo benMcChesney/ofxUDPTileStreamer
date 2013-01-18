@@ -1,5 +1,5 @@
 #include "testApp.h"
-
+#define MAX_FRAGMENT_SIZE 46875
 //--------------------------------------------------------------
 void testApp::setup(){
 	//we run at 60 fps!
@@ -17,8 +17,8 @@ void testApp::setup(){
 
 	//bFirstContact = false ; 
 	//connectionsRecieved = 0 ; 
-	tileStreamer.setupListener( 125 , 125 , "127.0.0.1" , 11999 , ofColor( 255 , 0 , 255 ) ) ; 
-	tileStreamer2.setupListener( 125 , 125 , "127.0.0.1" , 11998 , ofColor( 0 , 255 , 125 ) ) ; 
+	tileStreamer.setup( false , 125 , 125 , "127.0.0.1" , 11999 , ofColor( 255 , 0 , 255 ) ) ; 
+	tileStreamer2.setup( false , 125 , 125 , "127.0.0.1" , 11998 , ofColor( 0 , 255 , 125 ) ) ; 
 }
 
 //--------------------------------------------------------------
@@ -122,8 +122,16 @@ void testApp::update(){
 
 	//}
 
-	tileStreamer.recieveData() ;
-	tileStreamer2.recieveData( ) ; 
+	char udpMessage[ 46875 ];
+	tileStreamer.udpConnection.Receive(udpMessage, 46875 );
+	string message = udpMessage;
+
+	//tileStreamer.recieveData() ;
+	//tileStreamer2.recieveData( ) ; 
+	tileStreamer.recieveMessage( udpMessage ) ;
+
+	tileStreamer2.udpConnection.Receive(udpMessage, 46875 );
+	tileStreamer2.recieveMessage( udpMessage ) ; 
 
 }
 
@@ -132,10 +140,11 @@ void testApp::draw(){
     ofFill();
 	ofDrawBitmapStringHighlight("ImageStreamRecieveUDP : fps " + ofToString( ofGetFrameRate() ) , 10, ofGetHeight() - 60 );
 
+
 	ofSetColor( 255 ) ;
 	tileStreamer.draw( 25 , 25 ) ; 
-	tileStreamer2.draw( 25 + 10 + tileStreamer.tileWidth , 25 ) ; 
-//	recievedTexture2.draw( 50 + recievedTexture.getWidth() , 25 ) ; 
+	tileStreamer2.draw( 125 + 10 + tileStreamer.tileWidth , 25 ) ; 
+
 }
 
 //--------------------------------------------------------------

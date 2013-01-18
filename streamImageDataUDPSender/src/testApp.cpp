@@ -12,8 +12,8 @@ void testApp::setup(){
 	int port = 11999 ; 
 
 	//( int _width , int _height , string _address , int _port ) ; 
-	tileStreamer.setupStreamer( 125 , 125 , address , port , ofColor( 255 , 0 , 255 ) ) ; 
-	tileStreamer2.setupStreamer( 125 , 125 , address , 11998 , ofColor( 0 , 255 , 125 ) ) ; 
+	tileStreamer.setup( true , 125 , 125 , address , port , ofColor( 255 , 0 , 255 ) ) ; 
+	tileStreamer2.setup( true , 125 , 125 , address , 11998 , ofColor( 0 , 255 , 125 ) ) ; 
 	/*
     //create the socket and set to send to 127.0.0.1:11999
 	udpConnection.Create();
@@ -106,12 +106,12 @@ void testApp::draw(){
 	status += "\nstreamer2 status : " + ofToString(tileStreamer2.messageSentStatus) ; 
 
 	//"\nmessageSentStatus : " + ofToString( messageSentStatus ) ;
-	ofDrawBitmapStringHighlight ( status , 25 , ofGetHeight() - 50 ) ; 
+	//ofDrawBitmapStringHighlight ( status , 25 , ofGetHeight() - 50 ) ; 
 	ofSetColor( 255 , 255 , 255 ) ;
 	videoGrabber.draw ( 25 , 25 ) ; 
 
 	tileStreamer.draw( 25 , ofGetHeight() - 75 - tileStreamer.tileHeight ) ;
-	tileStreamer2.draw( 25 + tileStreamer.tileWidth , ofGetHeight() - 75 - tileStreamer.tileHeight ) ;
+	tileStreamer2.draw( 125 + tileStreamer.tileWidth , ofGetHeight() - 75 - tileStreamer.tileHeight ) ;
 }
 
 //--------------------------------------------------------------

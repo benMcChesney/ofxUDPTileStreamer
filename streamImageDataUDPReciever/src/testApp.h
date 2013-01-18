@@ -4,6 +4,8 @@
 //#include "ofxNetwork.h"
 #include "ofxUDPTileStreamer.h"
 
+#include "ofxNetwork.h"
+
 class testApp : public ofBaseApp{
 
 	public:

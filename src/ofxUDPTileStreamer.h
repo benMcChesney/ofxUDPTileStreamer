@@ -19,17 +19,18 @@ class ofxUDPTileStreamer
 		int tileWidth , tileHeight ; 
 		ofTexture texture ; 
 
-		void setupStreamer ( int _width , int _height , string _address , int _port , ofColor _debugColor ) ; 
-		void setupListener ( int _width , int _height , string _address , int _port , ofColor _debugColor ) ; 
+		void setup ( bool bStreaming , int _width , int _height , string _address , int _port , ofColor _debugColor ) ; 
 		void draw ( float x , float y ) ; 
 		void sendData( ) ;
 		void recieveData( ) ; 
+		void recieveMessage( char udpMessage[100000] ) ; 
 		void generateNoise( ) ; 
 		string address ; 
 		int port ; 
 
 		ofxUDPManager udpConnection ;
 		int messageSentStatus ;
+		int messageRecievedStatus ; 
 
 		ofColor debugColor ;
 
