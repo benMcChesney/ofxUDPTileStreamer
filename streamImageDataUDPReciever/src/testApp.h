@@ -31,7 +31,8 @@ class testApp : public ofBaseApp{
 
 		//bool bFirstContact ; 
 		//int connectionsRecieved ; 
-		ofxUDPTileStreamer tileStreamer ;
-		ofxUDPTileStreamer tileStreamer2 ;
+		//ofxUDPTileStreamer tileStreamer ;
+		//ofxUDPTileStreamer tileStreamer2 ;
+		vector<ofxUDPTileStreamer*> tiles ; 
 };
 

@@ -28,8 +28,11 @@ class testApp : public ofBaseApp{
 		//vector<ofPoint> stroke;
 
 		ofVideoGrabber videoGrabber ; 
-		ofxUDPTileStreamer tileStreamer ;
-		ofxUDPTileStreamer tileStreamer2 ;
+		
+		//ofxUDPTileStreamer tileStreamer ;
+		//ofxUDPTileStreamer tileStreamer2 ;
+
+		vector<ofxUDPTileStreamer*> tiles ; 
 		//string address ; 
 		//int port ; 
 		//int messageSentStatus ; 

@@ -9,11 +9,17 @@
 
 #include "ofMain.h"
 #include "ofxNetwork.h"
+#define MAX_FRAGMENT_SIZE 46875
 
 class ofxUDPTileStreamer
 {
 	public : 
 		ofxUDPTileStreamer( ) { } 
+		ofxUDPTileStreamer( bool bStreaming , int _width , int _height , string _address , int _port , ofColor _debugColor   )
+		{
+			setup ( bStreaming , _width , _height , _address , _port , _debugColor ) ; 
+		} 
+
 		~ofxUDPTileStreamer( ) { }
 
 		int tileWidth , tileHeight ; 

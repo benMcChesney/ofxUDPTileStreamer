@@ -12,8 +12,19 @@ void testApp::setup(){
 	int port = 11999 ; 
 
 	//( int _width , int _height , string _address , int _port ) ; 
-	tileStreamer.setup( true , 125 , 125 , address , port , ofColor( 255 , 0 , 255 ) ) ; 
-	tileStreamer2.setup( true , 125 , 125 , address , 11998 , ofColor( 0 , 255 , 125 ) ) ; 
+	//tileStreamer.setup( true , 125 , 125 , address , port , ofColor( 255 , 0 , 255 ) ) ; 
+	//tileStreamer2.setup( true , 125 , 125 , address , 11998 , ofColor( 0 , 255 , 125 ) ) ; 
+	int numTiles = 4 ; 
+	vector<ofColor> debugColors ; 
+	for ( int c = 0 ; c < numTiles ; c++ ) 
+	{
+		debugColors.push_back( ofColor( ofRandom( 255 ) , ofRandom( 255 ) , ofRandom( 255 ) ) ) ; 
+	}
+	for ( int i = 0 ; i < numTiles; i++ ) 
+	{
+		tiles.push_back( new ofxUDPTileStreamer( true , 125 , 125 , address , port + i , debugColors[i]) ) ; 
+	}
+	
 	/*
     //create the socket and set to send to 127.0.0.1:11999
 	udpConnection.Create();
@@ -33,23 +44,6 @@ void testApp::setup(){
 void testApp::update(){
 
 	ofSetWindowTitle( ofToString( ofGetFrameRate() ) + " fps" ) ; 
-	/*
-	if ( bCalibrationMessageSent == false ) 
-	{
-		//bCalibrationMessageSent = true ; 
-		int width = fragmentWidth ; 
-		int height = fragmentHeight ; 
-	
-		string message = "width"+ofToString( width ) ; 
-		udpConnection.Send( message.c_str() , message.length() ) ;
-
-		string message2 = "height" + ofToString( height ) ; 
-		udpConnection.Send( message2.c_str() , message2.length() ) ;  
-
-		bCalibrationMessageSent = true ; 
-		return ; 
-		
-	}*/
 	videoGrabber.update() ; 
 
 	/*
@@ -83,11 +77,13 @@ void testApp::update(){
 		//messageSentStatus = udpConnection.SendAll( (char*)pixels2 , numPixels ) ; 
 	}*/
 
-	tileStreamer.generateNoise( ) ; 
-	tileStreamer.sendData( ) ; 
+	for ( int i = 0 ; i < tiles.size() ; i++ ) 
+	{
+		tiles[i]->generateNoise() ; 
+		tiles[i]->sendData( ) ; 
+	}
 
-	tileStreamer2.generateNoise( ) ; 
-	tileStreamer2.sendData( ) ; 
+
 
 	/*
 		//string message="";
@@ -99,19 +95,17 @@ void testApp::update(){
 }
 
 //--------------------------------------------------------------
-void testApp::draw(){
-
-	string status = "connected to UDP via - " ; //+ address + ":" + ofToString( port ) ; 
-	status += "\nstreamer1 status : " + ofToString(tileStreamer.messageSentStatus) ; 
-	status += "\nstreamer2 status : " + ofToString(tileStreamer2.messageSentStatus) ; 
-
-	//"\nmessageSentStatus : " + ofToString( messageSentStatus ) ;
-	//ofDrawBitmapStringHighlight ( status , 25 , ofGetHeight() - 50 ) ; 
+void testApp::draw()
+{
 	ofSetColor( 255 , 255 , 255 ) ;
 	videoGrabber.draw ( 25 , 25 ) ; 
 
-	tileStreamer.draw( 25 , ofGetHeight() - 75 - tileStreamer.tileHeight ) ;
-	tileStreamer2.draw( 125 + tileStreamer.tileWidth , ofGetHeight() - 75 - tileStreamer.tileHeight ) ;
+	for ( int i = 0 ; i < tiles.size() ; i++ ) 
+	{
+		tiles[i]->draw( 25 + i * ( tiles[0]->tileWidth + 10 ) , ofGetHeight() - 75 - tiles[0]->tileHeight ) ;
+	}
+	//tileStreamer.draw( 25 , ofGetHeight() - 75 - tileStreamer.tileHeight ) ;
+	//tileStreamer2.draw( 125 + tileStreamer.tileWidth , ofGetHeight() - 75 - tileStreamer.tileHeight ) ;
 }
 
 //--------------------------------------------------------------
